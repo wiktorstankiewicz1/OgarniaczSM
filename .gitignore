@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+
+build/
+dist/
+_internal/
+
+PySide6/
+shiboken6/
+*.pyd
+*.dll
+*.exe
+*.zip
+*.rar
