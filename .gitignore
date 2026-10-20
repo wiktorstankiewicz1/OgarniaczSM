@@ -1,0 +1,37 @@
+# Local environments and Python caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Build output and deployed installations
+build/
+dist/
+BUILD/
+PROD/
+releases/
+*.exe
+*.dll
+*.zip
+*.rar
+
+# PyInstaller generates these; historical specs are under docs/legacy/specs.
+app/*.spec
+
+# Machine-specific configuration and secrets
+app/config.json
+app/version.json
+.env
+.env.*
+!.env.example
+sftp.json
+*.log
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

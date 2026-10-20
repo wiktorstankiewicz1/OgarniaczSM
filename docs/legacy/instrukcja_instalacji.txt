@@ -1,0 +1,28 @@
+Pierwsza instalacja na komputerach (jednorazowo, bez admina):
+
+Na każdym komputerze skopiuj folder:
+dist/ogarniacz/OgarniaczSM/ → %LOCALAPPDATA%\OgarniaczSM\
+
+Skopiuj dist/ogarniacz/OgarniaczUpdater.exe do %LOCALAPPDATA%\OgarniaczSM\ (musi tam być!).
+
+Utwórz skrót w Start Menu (zrobi to też pin_taskbar.ps1):
+
+Target: %LOCALAPPDATA%\OgarniaczSM\OgarniaczSM.exe
+
+(opcjonalnie) Uruchom pin_taskbar.ps1 dla każdego usera (jeśli chcesz spróbować automatycznego przypięcia).
+
+To jedyny moment, kiedy ręcznie dotykasz komputery. Dalej już wszystko będzie się aktualizowało samo.
+
+Publikacja nowej wersji dla wszystkich (bezobsługowo u userów):
+
+Zmień VERSION= w publish_update.bat.
+
+Uruchom build (python GENERATE_OGARNIACZ_EXE.py).
+
+Uruchom publish_update.bat – skopiuje build do Y:\Ogarniacz\releases\X.Y.Z\, nadpisze latest\, zaktualizuje manifest.json.
+
+Efekt:
+
+Komputery z już uruchomionym Ogarniaczem: w ciągu 15 minut same się zrestartują do nowej wersji.
+
+Komputery uruchomione później: zaktualizują się natychmiast przy starcie.

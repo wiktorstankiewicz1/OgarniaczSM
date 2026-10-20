@@ -1,0 +1,284 @@
+[
+  {
+    "source": "autoupdate.py",
+    "destination": "app\\autoupdate.py",
+    "sha256": "BE9158792AD8260E363E3419D1C5267808A1210126E485A79694B61937BD8861",
+    "bytes": 4346
+  },
+  {
+    "source": "build_installer.py",
+    "destination": "app\\build_installer.py",
+    "sha256": "66C69531887E867794F9FCFC9956604AA82D75D73C04E12E9B77D31C92DA44AA",
+    "bytes": 13162
+  },
+  {
+    "source": "BUILD_INSTRUCTIONS.md",
+    "destination": "docs\\legacy\\BUILD_INSTRUCTIONS.md",
+    "sha256": "13BF49FD75B4CAC8CDFDB4A22CA5CEAE1623B1C3697B5C8BC9A024CB7A54433E",
+    "bytes": 2507
+  },
+  {
+    "source": "BUILD_OPTIMIZATION_STRATEGY.md",
+    "destination": "docs\\legacy\\BUILD_OPTIMIZATION_STRATEGY.md",
+    "sha256": "D6D4B44BBA2CAA2E3D2A587B978E47CE084D8667250457EFB3963AA97C3C4CD4",
+    "bytes": 2795
+  },
+  {
+    "source": "bump_version.py",
+    "destination": "app\\bump_version.py",
+    "sha256": "C8C583652C593BEB3A4EDAD678A9B0A0A03DD92CD900A3A8A6857C5D19C1018B",
+    "bytes": 1252
+  },
+  {
+    "source": "create_manifest.py",
+    "destination": "app\\create_manifest.py",
+    "sha256": "789E572B187BF7974F9208D55FA1354280FBA515E2C9E90BA839AA8A603F5C93",
+    "bytes": 975
+  },
+  {
+    "source": "deps_manager.py",
+    "destination": "app\\deps_manager.py",
+    "sha256": "115795B1D8198599CF2EE70B0EA7ECE6C3AD9817E76FAD1457268B1090B0772C",
+    "bytes": 11483
+  },
+  {
+    "source": "fix_version.py",
+    "destination": "app\\fix_version.py",
+    "sha256": "E701D2CED88B351800508E89EEDB4D67FF86E3BE794C7BC272C25DECE79F41D4",
+    "bytes": 1288
+  },
+  {
+    "source": "GENERATE_INSTALLER_EXE.py",
+    "destination": "app\\GENERATE_INSTALLER_EXE.py",
+    "sha256": "534EBE0D70C516988F34BB9D9BE2B2DA4847038BC2C90F6726AF1B67320AFDC1",
+    "bytes": 2308
+  },
+  {
+    "source": "GENERATE_OGARNIACZ_EXE.py",
+    "destination": "app\\GENERATE_OGARNIACZ_EXE.py",
+    "sha256": "96EF78B5704FCC0788D5E79D0BD58667D862E7C53F7547B0B2B2868C59389F81",
+    "bytes": 4285
+  },
+  {
+    "source": "hqvantagerenderfrommax.py",
+    "destination": "app\\hqvantagerenderfrommax.py",
+    "sha256": "B0A669D17F8870DDFBA9CFC9C1A14F9CEFBE3A28663646CF08961D0DA9BC07E6",
+    "bytes": 5076
+  },
+  {
+    "source": "icon.ico",
+    "destination": "app\\icon.ico",
+    "sha256": "1B17F1CCC28617BE67BD7FEB920F049379B6E8C97BC790A36E924E647A9EC7C5",
+    "bytes": 78769
+  },
+  {
+    "source": "install_poppler.py",
+    "destination": "app\\install_poppler.py",
+    "sha256": "ED54746579A883123E74CD3AB0C43270F4D9695BAB04218B1BEF911C43000914",
+    "bytes": 5024
+  },
+  {
+    "source": "instrukcja_instalacji.txt",
+    "destination": "docs\\legacy\\instrukcja_instalacji.txt",
+    "sha256": "F53BE5DB37CF290EC86C7E132B49ADE58B8C1DA3D71A53D504056A223910C122",
+    "bytes": 1089
+  },
+  {
+    "source": "main.py",
+    "destination": "app\\main.py",
+    "sha256": "591874C0D78A28F53D20F7C07C9C39F6CA7FFB5F03E13627B79F59CB5AC3ADE5",
+    "bytes": 41473
+  },
+  {
+    "source": "NETWORK_ACCESS_REQUIREMENTS.md",
+    "destination": "docs\\legacy\\NETWORK_ACCESS_REQUIREMENTS.md",
+    "sha256": "ADED3615A667448D1FEA18143384156A9EED6FB7EF576692C0DD74E40DD087E9",
+    "bytes": 2384
+  },
+  {
+    "source": "OgarniaczInstaller.spec",
+    "destination": "app\\OgarniaczInstaller.spec",
+    "sha256": "B3F1E284005A3F18E6AF3475168F2F496C96BCA91DD6F81AC30036E1280619FB",
+    "bytes": 896
+  },
+  {
+    "source": "OgarniaczSM.spec",
+    "destination": "app\\OgarniaczSM.spec",
+    "sha256": "D524EE85CB4F3D9093D945B1BFB6E3799FFBF4176C0962B0EE41DE0581B8626A",
+    "bytes": 1274
+  },
+  {
+    "source": "OgarniaczUpdater.spec",
+    "destination": "app\\OgarniaczUpdater.spec",
+    "sha256": "ECDDC2E494ABC0D0C2D85BAEFF5326896AD75B48A2D8CAB65548C747E5BE439E",
+    "bytes": 752
+  },
+  {
+    "source": "ollama_proxy.py",
+    "destination": "app\\ollama_proxy.py",
+    "sha256": "C03D088BDCDAF9BCE776E353A268EAED37F11636B82C2ECF5F4989183700EFFA",
+    "bytes": 2939
+  },
+  {
+    "source": "ORGANIZATION_ANALYSIS.md",
+    "destination": "docs\\legacy\\ORGANIZATION_ANALYSIS.md",
+    "sha256": "65C01A5F560BC3474290DB2F56740B1C8701A1C4242E7A37A1D7A14055DC8299",
+    "bytes": 5692
+  },
+  {
+    "source": "pdftojpg.py",
+    "destination": "app\\pdftojpg.py",
+    "sha256": "5289340F4571D9F775A67D573E40A37EE025DCBC61A3AC2F81BF63C3C309BD48",
+    "bytes": 26731
+  },
+  {
+    "source": "people_enhancer_pipeline.py",
+    "destination": "app\\people_enhancer_pipeline.py",
+    "sha256": "B5D51117A47EBF4014D2B87894FEA6CD47C60F6923E278C1192442CDFC3B8F97",
+    "bytes": 17951
+  },
+  {
+    "source": "people_enhancer_widget.py",
+    "destination": "app\\people_enhancer_widget.py",
+    "sha256": "7D47D1D2E3DCBA5AD3450CD1DFB0F9EE100443085C9E8743D77A3522EB9021CE",
+    "bytes": 14317
+  },
+  {
+    "source": "PRACTICAL_SYNC_SOLUTION.md",
+    "destination": "docs\\legacy\\PRACTICAL_SYNC_SOLUTION.md",
+    "sha256": "052019DDB14CFC5EBF01451652DC3D0A8804906139DD9F050A3F024399D9A77F",
+    "bytes": 2992
+  },
+  {
+    "source": "PROD_SYNC_OPTIMIZATION.md",
+    "destination": "docs\\legacy\\PROD_SYNC_OPTIMIZATION.md",
+    "sha256": "EB5AF07F2BAF3A9388521FF7A8AC59EDF5D1BEC58921AC3C38B43456BD55D3C2",
+    "bytes": 3403
+  },
+  {
+    "source": "publish_update.bat",
+    "destination": "app\\publish_update.bat",
+    "sha256": "30B5A8FF7E23C78A30E786A48AAEF60B10F75877E2A3CF994EDBB90E11B6CC16",
+    "bytes": 1248
+  },
+  {
+    "source": "publish.bat",
+    "destination": "app\\publish.bat",
+    "sha256": "E25A40CE5F9AA69186ACA7BC3CA304B86A0819E702525075D6FBC18A929281BB",
+    "bytes": 5405
+  },
+  {
+    "source": "QUICK_BUILD.md",
+    "destination": "docs\\legacy\\QUICK_BUILD.md",
+    "sha256": "203BC6A92EC2182DBEB2ADCAAF19C8ACAED2A4DBF1B90877DEC3D1627A2BA244",
+    "bytes": 1076
+  },
+  {
+    "source": "QUICK_GUIDE.md",
+    "destination": "docs\\legacy\\QUICK_GUIDE.md",
+    "sha256": "3BD447EB43F35613CBB2404DE555AC5C0EEFF2B7BF6B0222550B939B6BE70E98",
+    "bytes": 1297
+  },
+  {
+    "source": "QUICK_VC_REDIST_SETUP.md",
+    "destination": "docs\\legacy\\QUICK_VC_REDIST_SETUP.md",
+    "sha256": "B303F6F64FDC52F0EA128CBB1E5C2C9E72F94681AA6D0D807A1A707F84ED7DC2",
+    "bytes": 1299
+  },
+  {
+    "source": "requirements.txt",
+    "destination": "app\\requirements.txt",
+    "sha256": "A1775E3F83E509550B49693578ED35AC8342B6D06176B3E54FE3C4495E451D77",
+    "bytes": 14
+  },
+  {
+    "source": "run_pdftojpg.bat",
+    "destination": "app\\run_pdftojpg.bat",
+    "sha256": "8784CC8D04F63E925B21A3AF7F407D20238BCA995CE2A42D7E12276D6371DEC8",
+    "bytes": 55
+  },
+  {
+    "source": "setup_ollama_cursor.md",
+    "destination": "docs\\legacy\\setup_ollama_cursor.md",
+    "sha256": "74261B55D2C65A476926CC17DC0784040FFCE710F66E8DFBA9A9C3D5FB375A46",
+    "bytes": 2786
+  },
+  {
+    "source": "SETUP_VC_REDIST.md",
+    "destination": "docs\\legacy\\SETUP_VC_REDIST.md",
+    "sha256": "E0261270F226AD65C4CD24A9E719D3679132BE4EA5F13E297C3EF24D2338B34F",
+    "bytes": 2137
+  },
+  {
+    "source": "SYNC_EXCLUSIONS.md",
+    "destination": "docs\\legacy\\SYNC_EXCLUSIONS.md",
+    "sha256": "3212347CD1B3FEDF45696EA70371B7B1EF633FC8CE3AD385F23CC0C0E606AD7A",
+    "bytes": 2330
+  },
+  {
+    "source": "SYNC_SOLUTION.md",
+    "destination": "docs\\legacy\\SYNC_SOLUTION.md",
+    "sha256": "B866FE2032046939664FF3946B5639CD47939072F262E4E80EA6B2811040F7CC",
+    "bytes": 3051
+  },
+  {
+    "source": "TEST_AUTOUPDATE.md",
+    "destination": "docs\\legacy\\TEST_AUTOUPDATE.md",
+    "sha256": "F9583411DD68C58047D2B29573C73CEB3719CA47B03C7817D7E187234E5074FF",
+    "bytes": 1089
+  },
+  {
+    "source": "test_publish.bat",
+    "destination": "app\\test_publish.bat",
+    "sha256": "5CDFF9757947238BD46C39B047E1D64C56A22E577FA50A1163871118DE754E54",
+    "bytes": 2009
+  },
+  {
+    "source": "ui_components.py",
+    "destination": "app\\ui_components.py",
+    "sha256": "E4708851DE3D5BBB15CB54994C1B5251E4BABF94DC229425EBD7CEDAA47370AB",
+    "bytes": 12809
+  },
+  {
+    "source": "updater.py",
+    "destination": "app\\updater.py",
+    "sha256": "46EA23EF74870B905C5F92D26923B310EBC8E77F52570A3CE0547D69EAC3C4C4",
+    "bytes": 3394
+  },
+  {
+    "source": "utils.py",
+    "destination": "app\\utils.py",
+    "sha256": "0A42B0D8BCB799581786E33821FB75B310720CC4661BC309ECD564CB49297A7F",
+    "bytes": 1356
+  },
+  {
+    "source": "VAN_test1.py",
+    "destination": "app\\VAN_test1.py",
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "bytes": 0
+  },
+  {
+    "source": "VERSION_WORKFLOW.md",
+    "destination": "docs\\legacy\\VERSION_WORKFLOW.md",
+    "sha256": "136D5F3059D1A502D9C423BAE1B0C299AF0A17937798019AD1896A0CEFC3242D",
+    "bytes": 3610
+  },
+  {
+    "source": "version.txt",
+    "destination": "app\\version.txt",
+    "sha256": "637907FFD1D3969AC0463A7D360309679F9E8FE049BE6C0C6A5DD7A00E1ED592",
+    "bytes": 9
+  },
+  {
+    "source": "zeus_workflows_api.py",
+    "destination": "app\\zeus_workflows_api.py",
+    "sha256": "E10511BAF94CD75401998F4D51BE8074C5AB331A1A1343096808CBBB48AA1B7E",
+    "bytes": 3153
+  },
+  {
+    "source": "zeus_workflows_widget.py",
+    "destination": "app\\zeus_workflows_widget.py",
+    "sha256": "921ED94416A3ED383C03ED5DCE573406B83E89D0CD00325ECDE314E808D34032",
+    "bytes": 16527
+  }
+]
