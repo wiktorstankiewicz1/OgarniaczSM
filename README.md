@@ -45,7 +45,9 @@ ich nie instaluje. Nie wszystkie moduły wymagają ich do pracy.
 
 Źródła przejęto z udziału Y: 20.10.2026 z weryfikacją SHA256. Zachowano dawną
 historię Git i origin. Prace są na gałęzi `development/project-foundation`.
-Zmiany są zapisane lokalnie; niczego nie wypchnięto ani nie wdrożono.
+Gałąź jest opublikowana na GitHub, a Zeus ma osobny klon i środowisko.
+Nie wdrażano zmian do produkcji. Zasady pracy obu komputerów:
+[docs/COLLABORATION.md](docs/COLLABORATION.md).
 
 Testy: `python -m unittest discover -s tests -v`.
 Szczegóły i ograniczenia: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
