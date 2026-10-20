@@ -97,19 +97,19 @@
   },
   {
     "source": "OgarniaczInstaller.spec",
-    "destination": "app\\OgarniaczInstaller.spec",
+    "destination": "docs\\legacy\\specs\\OgarniaczInstaller.spec",
     "sha256": "B3F1E284005A3F18E6AF3475168F2F496C96BCA91DD6F81AC30036E1280619FB",
     "bytes": 896
   },
   {
     "source": "OgarniaczSM.spec",
-    "destination": "app\\OgarniaczSM.spec",
+    "destination": "docs\\legacy\\specs\\OgarniaczSM.spec",
     "sha256": "D524EE85CB4F3D9093D945B1BFB6E3799FFBF4176C0962B0EE41DE0581B8626A",
     "bytes": 1274
   },
   {
     "source": "OgarniaczUpdater.spec",
-    "destination": "app\\OgarniaczUpdater.spec",
+    "destination": "docs\\legacy\\specs\\OgarniaczUpdater.spec",
     "sha256": "ECDDC2E494ABC0D0C2D85BAEFF5326896AD75B48A2D8CAB65548C747E5BE439E",
     "bytes": 752
   },

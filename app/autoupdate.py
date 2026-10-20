@@ -1,4 +1,4 @@
-import json, os, subprocess, threading, time
+import json, os, subprocess, threading, time, sys
 from packaging import version as pkg_version
 from pathlib import Path
 
@@ -40,6 +40,9 @@ def _get_remote_manifest() -> dict:
         raise
 
 def check_for_updates_once(silent: bool = True):
+    # Source checkouts must never replace the installed production application.
+    if not getattr(sys, "frozen", False):
+        return
     try:
         manifest = _get_remote_manifest()
         remote_ver = str(manifest["version"]).strip()
@@ -94,5 +97,7 @@ def _loop(interval_seconds: int):
         time.sleep(interval_seconds)
 
 def start_periodic_update_check(interval_seconds: int = 900):
+    if not getattr(sys, "frozen", False):
+        return
     t = threading.Thread(target=_loop, args=(interval_seconds,), daemon=True)
     t.start()

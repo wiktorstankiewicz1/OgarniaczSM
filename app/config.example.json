@@ -1,7 +1,7 @@
 {
   "version": 2,
   "auto_refresh_seconds": 180,
-  "app_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icon.ico",
+  "app_icon": "main.ico",
   "scripts_folder": "Y:/Instalki/_SKRYPTY WIKT/Still Motion Scripts",
   "max_exe": "C:/Program Files/Autodesk/3ds Max 2024/3dsmax.exe",
   "tiles": [
@@ -9,37 +9,37 @@
       "label": "Projekty (folder)",
       "type": "folder",
       "path": "Y:/__PROJECTS",
-      "tile_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/projects.png"
+      "tile_icon": "icons/projects.png"
     },
     {
       "label": "Skrypty Wiktora",
       "type": "internal",
       "action": "open_maxscripts_panel",
-      "tile_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/coding.png"
+      "tile_icon": "icons/coding.png"
     },
     {
       "label": "ulubione aplikacje",
       "type": "internal",
       "action": "open_fav_apps",
-      "tile_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/apps.png"
+      "tile_icon": "icons/apps.png"
     },
     {
       "label": "pdfmagican",
       "type": "python",
-      "path": "Y:/Instalki/_SKRYPTY WIKT/OgarniaczSM/pdftojpg.py",
-      "tile_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/pdfmagican.png"
+      "path": "pdftojpg.py",
+      "tile_icon": "pdftojpg.ico"
     },
     {
       "label": "People Enhancer",
       "type": "internal",
       "action": "open_people_enhancer",
-      "tile_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/people_enhancer.png"
+      "tile_icon": "icons/people_enhancer.png"
     },
     {
       "label": "Zeus AI Workflows",
       "type": "internal",
       "action": "open_zeus_workflows",
-      "tile_icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/people_enhancer.png"
+      "tile_icon": "icons/people_enhancer.png"
     }
   ],
   "fav_apps": {
@@ -47,26 +47,26 @@
       {
         "label": "Asana",
         "path": "C:/Users/Public/Asana/Asana.exe",
-        "icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/asana.png"
+        "icon": ""
       }
     ],
     "modelowanie": [
       {
         "label": "3ds Max 2024",
         "path": "C:/Program Files/Autodesk/3ds Max 2024/3dsmax.exe",
-        "icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/3dsmax.png"
+        "icon": ""
       },
       {
         "label": "Blender",
         "path": "C:/Program Files/Blender Foundation/Blender 4.2/blender.exe",
-        "icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/blender.png"
+        "icon": ""
       }
     ],
     "postprodukcja": [
       {
         "label": "Photoshop",
         "path": "C:/Program Files/Adobe/Adobe Photoshop 2024/Photoshop.exe",
-        "icon": "Y:/instalki/_SKRYPTY WIKT/OgarniaczSM/icons/ps.png"
+        "icon": ""
       }
     ]
   }
