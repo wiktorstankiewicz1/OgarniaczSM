@@ -26,6 +26,13 @@ Oba komputery mają własne `.venv` na zarządzanym Pythonie 3.12.11,
 i lokalny znacznik wersji deweloperskiej. Na Zeusie przechodzą wszystkie
 3 testy, kompilacja składni oraz kontrola zgodności zależności.
 
+GitHub: wysłanie gałęzi z Blade22 zostało potwierdzone. Na Zeusie potwierdzono
+fetch i pull. Próba push przez SSH trafiła na ograniczenie Windows Credential
+Manager dla sesji sieciowych. Przed pierwszym push na Zeusie zaloguj GitHub
+w lokalnym terminalu tego komputera poleceniem
+`git credential-manager github login --username wiktorstankiewicz1`.
+Nie skopiowano tokenu z Blade22 ani nie zmieniano globalnego magazynu poświadczeń.
+
 ## Codzienna praca
 
 1. Zapisz bieżącą pracę w commicie i sprawdź `git status`.

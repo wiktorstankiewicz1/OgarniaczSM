@@ -41,4 +41,4 @@ wersji; każda paczka jest powiązana z commitem. Nie wystarcza poprawny numer.
   sprzecznych instrukcji. Dokumentacja bieżąca: README i docs/DEVELOPMENT.md.
 
 Najpierw etap 1, potem nowe funkcje. Fundament lokalny jest przygotowany;
-migracja produkcji i integracja gałęzi do GitHub pozostają do wykonania.
+migracja produkcji i integracja gałęzi do main pozostają do wykonania.
