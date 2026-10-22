@@ -40,6 +40,12 @@
       "type": "internal",
       "action": "open_zeus_workflows",
       "tile_icon": "icons/people_enhancer.png"
+    },
+    {
+      "label": "Archviz Studio",
+      "type": "internal",
+      "action": "open_archviz_studio",
+      "tile_icon": "archviz_studio_widget.png"
     }
   ],
   "fav_apps": {

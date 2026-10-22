@@ -90,6 +90,9 @@ def build_app_onedir():
             "--distpath", str(DIST),
             "--workpath", str(BUILD),
             "--specpath", str(HERE),      # zapisz .spec w katalogu projektu
+            "--add-data", str(HERE / "archviz_studio.html") + ";.",
+            "--add-data", str(HERE / "archviz_studio.png") + ";.",
+            "--add-data", str(HERE / "archviz_studio_widget.png") + ";.",
             str(MAIN),
         ]
         if ICON.exists():
