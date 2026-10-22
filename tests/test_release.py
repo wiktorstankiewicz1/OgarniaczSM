@@ -35,7 +35,9 @@ class ReleaseIntegrityTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="ogarniacz-release-qa-")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        # GitHub's Windows TEMP can use RUNNER~1 while production resolves the
+        # same directory to runneradmin. Fault-injection predicates must agree.
+        self.root = Path(self.temp.name).resolve()
         self.src = self.root / "release"
         self.dst = self.root / "installation"
         self.src.mkdir()
@@ -164,6 +166,10 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.mock_launch.assert_not_called()
 
     def test_failed_stage_activation_rolls_back_entire_old_installation(self):
+        alias_hop = self.root / "alias-hop"
+        alias_hop.mkdir()
+        source_alias = alias_hop / ".." / self.src.name
+        destination_alias = alias_hop / ".." / self.dst.name
         original_rename = Path.rename
         activation_attempted = []
         def fail_activation(path, target):
@@ -173,7 +179,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
             return original_rename(path, target)
         with patch.object(Path, "rename", fail_activation):
             with self.assertRaises(PermissionError):
-                updater.copy_dir(self.src, self.dst, self.manifest_sha, self.version)
+                updater.copy_dir(source_alias, destination_alias, self.manifest_sha, self.version)
         self.assertEqual([True], activation_attempted)
         self.assertEqual(self.original_install, file_snapshot(self.dst))
         self.assertFalse(list(self.root.glob("installation.staging-*")))
@@ -240,12 +246,14 @@ class ReleaseIntegrityTests(unittest.TestCase):
     def test_frozen_autoupdate_resolves_installation_from_actual_executable(self):
         spec = importlib.util.spec_from_file_location("qa_frozen_autoupdate", autoupdate.__file__)
         module = importlib.util.module_from_spec(spec)
-        executable = self.root / "portable-install" / "OgarniaczSM.exe"
+        alias_hop = self.root / "executable-alias-hop"
+        alias_hop.mkdir()
+        executable = alias_hop / ".." / "portable-install" / "OgarniaczSM.exe"
         with patch.object(sys, "frozen", True, create=True), \
                 patch.object(sys, "executable", str(executable)):
             spec.loader.exec_module(module)
-        self.assertEqual(executable.parent, module.APP_DIR)
-        self.assertEqual(executable, module.APP_EXE)
+        self.assertEqual(executable.parent.resolve(), module.APP_DIR)
+        self.assertEqual(executable.resolve(), module.APP_EXE)
         self.mock_launch.assert_not_called()
 
     def test_registry_migrates_outside_installation_without_overwriting_existing_state(self):
