@@ -63,6 +63,11 @@ numeru wydania. Oryginalne `version.txt` pozostaje niezmienione.
 
 ## Build i dystrybucja
 
+Nowa ścieżka wydań to `tools/build_release.py`, uruchamiane z czystego commita.
+Instrukcja stagingu, testu EXE, publikacji i rollbacku: [RELEASING.md](RELEASING.md).
+Poniższy opis starego GENERATE pozostaje dokumentacją importu; nie używaj go do
+nowego wydania, ponieważ usuwa część zasobów Qt WebEngine.
+
 Dotychczasowy build lokalny, uruchamiany z `app/` we własnym `.venv`:
 
 ```powershell

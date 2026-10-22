@@ -852,7 +852,8 @@ class OgarniaczWindow(QWidget):
         if act in ("open_archviz_studio", "archviz_studio", "archviz"):
             if self.archviz_studio_widget is None:
                 from archviz_studio_widget import ArchvizStudioWidget
-                self.archviz_studio_widget = ArchvizStudioWidget(parent=None)
+                self.archviz_studio_widget = ArchvizStudioWidget(parent=None,
+                    url=self.config.get("archviz_url"), registry=self.config.get("archviz_registry"))
                 self.archviz_studio_widget.set_back_callback(lambda: self.stack.setCurrentIndex(0))
                 self.stack.addWidget(self.archviz_studio_widget)
             self.resize(max(1400, self.width()), max(900, self.height()))

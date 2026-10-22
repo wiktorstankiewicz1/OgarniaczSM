@@ -22,7 +22,9 @@ zamiast kopiować `.venv`. Zmienna `OGARNIACZSM_CONFIG` wskazuje własny config 
 `config.example.json`, a `OGARNIACZ_ARCHVIZ_URL` opcjonalnie zmienia adres panelu.
 `OGARNIACZ_ARCHVIZ_REGISTRY` może wskazać oddzielny rejestr ostatnich projektów,
 np. dla pilota, także gdy silnik jest automatycznie uruchamiany z panelu Qt.
-To wersja źródłowa; nie opublikowano nowego EXE ani manifestu aktualizacji.
+Sposób budowania i instalacji wersji EXE opisuje [RELEASING.md](RELEASING.md).
+Rejestr projektów leży w `%LOCALAPPDATA%\StillMotion\ArchvizStudio`, poza
+katalogiem aktualizowanych binariów. Dawny rejestr jest migrowany bez usuwania źródła.
 
 ## Projekt i codzienna praca
 

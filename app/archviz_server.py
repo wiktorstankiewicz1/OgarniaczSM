@@ -21,7 +21,12 @@ DEFAULT_PORT = 8890
 
 
 def default_registry():
-    return Path(os.environ.get("LOCALAPPDATA", Path.home())) / "OgarniaczSM" / "ArchvizStudio" / "registry.json"
+    local = Path(os.environ.get("LOCALAPPDATA", Path.home()))
+    target = local / "StillMotion" / "ArchvizStudio" / "registry.json"
+    legacy = local / "OgarniaczSM" / "ArchvizStudio" / "registry.json"
+    if not target.exists() and legacy.is_file():
+        atomic_json(target, json.loads(legacy.read_text(encoding="utf-8-sig")))
+    return target
 
 
 def atomic_json(path, data):
@@ -167,6 +172,14 @@ class StudioService:
         # Worker jobs are not cancelled when a browser/desktop view closes.
         self.executor.shutdown(wait=True, cancel_futures=False)
 
+    def require_idle(self):
+        with self.lock:
+            for project in self.projects.values():
+                if any(j["status"] in {"running", "queued"} for j in project.snapshot()["jobs"]):
+                    raise ValueError("Silnik ma aktywne zadania. Dokończ je przed zmianą wersji aplikacji.")
+            if any(not future.done() for future in self.futures.values()):
+                raise ValueError("Silnik jeszcze kończy zadanie.")
+
 
 class StudioHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
@@ -235,7 +248,8 @@ class StudioHandler(BaseHTTPRequestHandler):
             elif path == "/api/bootstrap":
                 self._json({"token": self.service.token, "api_version": 1})
             elif path == "/api/health":
-                self._json({"status": "ok", "service": "archviz-studio", "api_version": 1})
+                from archviz_runtime import runtime_info
+                self._json({"status": "ok", "service": "archviz-studio", "api_version": 1, **runtime_info()})
             elif path == "/api/state":
                 self._json(self.service.state())
             elif path == "/api/pick":
@@ -287,6 +301,11 @@ class StudioHandler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("Oczekiwano obiektu JSON.")
             path = urlparse(self.path).path
+            if path == "/api/shutdown":
+                self.service.require_idle()
+                self._json({"status": "stopping"})
+                threading.Thread(target=self.server.shutdown, daemon=True).start()
+                return
             if path == "/api/project/create":
                 self._json({"project": self.service.create_project(data)})
                 return

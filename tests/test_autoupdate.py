@@ -28,10 +28,14 @@ class UpdateIsolationTests(unittest.TestCase):
         thread.assert_not_called()
 
     def test_frozen_app_still_passes_new_release_to_updater(self):
-        release = {"version": "0.5.2.29", "src_path": "C:/mock-release"}
+        release = {"version": "0.5.2.29", "src_path": "C:/mock-release",
+                   "commit": "a" * 40, "file_manifest_sha256": "b" * 64}
+        verified_helper = Path("C:/mock-temp-updater.exe")
         with patch.object(sys, "frozen", True, create=True), \
              patch.object(autoupdate, "_get_remote_manifest", return_value=release), \
              patch.object(autoupdate, "_get_local_version", return_value="0.5.2.28"), \
+             patch.object(autoupdate, "_verified_updater", return_value=verified_helper) as verified, \
+             patch.object(autoupdate, "_stop_idle_archviz") as stop_archviz, \
              patch.object(autoupdate, "_log"), \
              patch.object(Path, "exists", return_value=True), \
              patch.object(autoupdate.subprocess, "Popen") as popen, \
@@ -40,6 +44,11 @@ class UpdateIsolationTests(unittest.TestCase):
         args = popen.call_args.args[0]
         self.assertEqual(args[args.index("--version") + 1], "0.5.2.29")
         self.assertEqual(args[args.index("--dst") + 1], str(autoupdate.APP_DIR))
+        self.assertEqual(str(verified_helper), args[0])
+        self.assertEqual(release["file_manifest_sha256"], args[args.index("--manifest-sha256") + 1])
+        self.assertEqual(str(os.getpid()), args[args.index("--wait-pid") + 1])
+        verified.assert_called_once()
+        stop_archviz.assert_called_once_with()
         exit_process.assert_called_once_with(0)
 
 

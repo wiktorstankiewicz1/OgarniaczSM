@@ -15,18 +15,24 @@ from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
 
 
-def service_available(url):
+def service_info(url):
     try:
         with urllib.request.urlopen(url.rstrip("/") + "/api/health", timeout=1) as response:
-            return json.load(response).get("service") == "archviz-studio"
+            return json.load(response)
     except Exception:
-        return False
+        return None
+
+
+def service_available(url):
+    from archviz_runtime import compatible_service
+    return compatible_service(service_info(url))
 
 
 class ArchvizStudioWidget(QWidget):
-    def __init__(self, parent=None, url=None):
+    def __init__(self, parent=None, url=None, registry=None):
         super().__init__(parent)
         self.url = url or os.environ.get("OGARNIACZ_ARCHVIZ_URL", "http://127.0.0.1:8890/")
+        self.registry = registry or os.environ.get("OGARNIACZ_ARCHVIZ_REGISTRY")
         self._back_callback = None
         self._starting = False
         self._service_error = None
@@ -84,6 +90,24 @@ class ArchvizStudioWidget(QWidget):
         def start():
             try:
                 if not service_available(self.url):
+                    live = service_info(self.url)
+                    if live:
+                        if live.get("service") != "archviz-studio" or not live.get("build"):
+                            raise RuntimeError("Port zajmuje wcześniejszy silnik. Zakończ go przed otwarciem nowej wersji.")
+                        # A previous build can hand off only when idle. Its jobs
+                        # and project remain on disk; no process is force-killed.
+                        base = self.url.rstrip("/")
+                        with urllib.request.urlopen(base + "/api/bootstrap", timeout=3) as response:
+                            token = json.load(response)["token"]
+                        request = urllib.request.Request(base + "/api/shutdown", data=b"{}",
+                            headers={"Content-Type": "application/json", "X-Studio-Token": token})
+                        with urllib.request.urlopen(request, timeout=5):
+                            pass
+                        deadline = time.monotonic() + 10
+                        while service_info(self.url) and time.monotonic() < deadline:
+                            time.sleep(.2)
+                        if service_info(self.url):
+                            raise RuntimeError("Poprzedni silnik nie zakończył pracy.")
                     from urllib.parse import urlparse
                     parsed = urlparse(self.url)
                     if parsed.hostname not in {"127.0.0.1", "localhost"}:
@@ -94,7 +118,7 @@ class ArchvizStudioWidget(QWidget):
                     # so use its explicit server command instead of a .py argument.
                     if getattr(sys, "frozen", False):
                         command = [sys.executable, "--archviz-server", "--port", str(parsed.port or 8890)]
-                    registry = os.environ.get("OGARNIACZ_ARCHVIZ_REGISTRY")
+                    registry = self.registry
                     if registry:
                         command += ["--registry", registry]
                     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)

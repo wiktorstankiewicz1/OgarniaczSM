@@ -16,7 +16,7 @@ Wybierz katalog zawierający ten plik i `.git`, a nie `app/` ani udział Y:.
 OgarniaczSM/
   app/                 aktualne źródła, narzędzia budowania i zasoby
     config.example.json  wzór konfiguracji; config.json pozostaje lokalny
-    version.txt          numer dotychczasowego wydania: 0.5.2.28
+    version.txt          numer wydania: 0.5.2.29
   tests/               testy izolacji aktualizatora
   docs/
     DEVELOPMENT.md     uruchamianie i zasady Git
@@ -56,3 +56,5 @@ Nie wdrażano zmian do produkcji. Zasady pracy obu komputerów:
 
 Testy: `python -m unittest discover -s tests -v`.
 Szczegóły i ograniczenia: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+
+Build i wdrożenie: [docs/RELEASING.md](docs/RELEASING.md).
