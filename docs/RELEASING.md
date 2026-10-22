@@ -56,6 +56,29 @@ kopii. Helper pochodzi ze zweryfikowanego nowego wydania i jest uruchamiany z
 TEMP po zakończeniu starego procesu. Działające zadania Archviz opóźniają update.
 Dane nowego rejestru Archviz leżą poza folderem binariów i przeżywają aktualizację.
 
+### Instalacja z sesji Codexa w MSIX
+
+Na Windows 11 zapis nowego katalogu AppData przez proces pakietowy może trafić
+do `Packages/<pakiet>/LocalCache`, mimo że w Codexie widać zwykłą ścieżkę.
+`Test-Path`, poprawny hash i start EXE z tej samej sesji nie potwierdzają instalacji
+dostępnej niezależnie od Codexa. Szczegółowe wykluczenia Windows 11 mają pierwszeństwo
+przed starszym globalnym ustawieniem wyłączającym wirtualizację.
+[Zasady MSIX](https://learn.microsoft.com/en-us/windows/msix/desktop/flexible-virtualization).
+
+Sprawdź istnienie fizycznego pliku przez zewnętrzny provider WMI `CIM_DataFile`
+oraz rzeczywistą ścieżkę uchwytu `GetFinalPathNameByHandleW`. Jeśli zapis został
+przekierowany, wykonaj instalację zweryfikowanym `updater.copy_dir` z jednorazowego
+zadania Harmonogramu: bieżący użytkownik, `InteractiveToken`, ograniczone uprawnienia,
+bez wyzwalaczy. Interpreter, skrypt i protokół umieść poza AppData. Helper musi
+przed zapisem potwierdzić `GetCurrentPackageFullName = 15700` (`NO_PACKAGE`).
+
+W tym kontekście wykonaj fizyczną instalację, zachowaj kopie istniejących skrótów
+i ustaw ich cel na fizyczny EXE. Rejestr Archviz inicjalizuj wyłącznie, gdy go brak;
+istniejącej konfiguracji nie zastępuj. Zachowaj protokół i rollback, usuń jednorazowe
+zadanie po zakończeniu. Następnie uruchom aplikację skrótem z Explorera i sprawdź
+wersję, commit, panel i zimny restart poza Codexem. Nie zmieniaj zabezpieczeń ani
+ustawień wirtualizacji MSIX. Aplikacja nie wymaga stałego zadania Harmonogramu.
+
 ## Rollback
 
 Przed zmianą binariów zamknij app i bezczynny serwer. Przywróć poprzedni manifest
