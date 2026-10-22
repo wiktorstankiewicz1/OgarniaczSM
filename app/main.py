@@ -330,6 +330,9 @@ class OgarniaczWindow(QWidget):
         self.zeus_workflows_widget.set_back_callback(lambda: self.stack.setCurrentIndex(0))
         self.stack.addWidget(self.zeus_workflows_widget)
 
+        # The editor starts its independent service only when opened.
+        self.archviz_studio_widget = None
+
         # --- layout główny ---
         root = QVBoxLayout(self)
         root.addLayout(top)
@@ -689,9 +692,17 @@ class OgarniaczWindow(QWidget):
 
     def rebuild_home_tiles(self):
         self.clear_flow()
-        tiles = self.config.get("tiles", [])
+        tiles = list(self.config.get("tiles", []))
+        if not any(str(t.get("action", "")).lower() in
+                   ("open_archviz_studio", "archviz_studio", "archviz") for t in tiles):
+            tiles.append({"label": "Archviz Studio", "type": "internal",
+                          "action": "open_archviz_studio",
+                          "tile_icon": str(Path(__file__).resolve().parent / "archviz_studio_widget.png")})
         for t in tiles:
             label = t.get("label", "Tile"); icon_path = t.get("tile_icon", "")
+            if str(t.get("action", "")).lower() in ("open_archviz_studio", "archviz_studio", "archviz"):
+                if not icon_path or not Path(resolve_rel_to_config(icon_path)).is_file():
+                    icon_path = str(Path(__file__).resolve().parent / "archviz_studio_widget.png")
             w = TileWidget(label, icon_path, t, self.launch_payload, self.flow_widget)
             self.flow_layout.addWidget(w)
 
@@ -838,6 +849,17 @@ class OgarniaczWindow(QWidget):
     def run_internal(self, action, payload=None):
         act = (action or "").strip().lower()
 
+        if act in ("open_archviz_studio", "archviz_studio", "archviz"):
+            if self.archviz_studio_widget is None:
+                from archviz_studio_widget import ArchvizStudioWidget
+                self.archviz_studio_widget = ArchvizStudioWidget(parent=None,
+                    url=self.config.get("archviz_url"), registry=self.config.get("archviz_registry"))
+                self.archviz_studio_widget.set_back_callback(lambda: self.stack.setCurrentIndex(0))
+                self.stack.addWidget(self.archviz_studio_widget)
+            self.resize(max(1400, self.width()), max(900, self.height()))
+            self.stack.setCurrentWidget(self.archviz_studio_widget)
+            return
+
         # 1) Wbudowany panel skryptów
         if act in ("", "open_maxscripts_panel", "open_scripts", "scripts", "scripts_panel"):
             if not self.scripts_widget.folder:
@@ -981,6 +1003,7 @@ class OgarniaczWindow(QWidget):
 # ---------------- entry ----------------
 
 def main():
+    QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     app = QApplication(sys.argv)
 
     # --- Splash (prosty, lekki) ---
@@ -1004,6 +1027,8 @@ def main():
     # --- Główne okno ---
     win = OgarniaczWindow()
     win.show()
+    if "--archviz-studio" in sys.argv:
+        win.run_internal("open_archviz_studio")
 
      # AUTO UPDATE
     try:
@@ -1019,7 +1044,25 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        if "--archviz-server" in sys.argv:
+            from archviz_server import run_server
+            import argparse
+            parser = argparse.ArgumentParser()
+            parser.add_argument("--archviz-server", action="store_true")
+            parser.add_argument("--port", type=int, default=8890)
+            parser.add_argument("--registry")
+            args = parser.parse_args()
+            run_server(args.port, args.registry)
+        elif "--archviz-pick" in sys.argv:
+            from archviz_cli import pick_result
+            import argparse
+            parser = argparse.ArgumentParser()
+            parser.add_argument("--archviz-pick", choices=["folder", "image", "images"])
+            parser.add_argument("--result-file")
+            args = parser.parse_args()
+            pick_result(args.archviz_pick, args.result_file)
+        else:
+            main()
     except Exception as e:
         import traceback
         msg = "Unhandled error:\n\n" + str(e) + "\n\n" + traceback.format_exc()

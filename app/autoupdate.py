@@ -1,15 +1,67 @@
 import json, os, subprocess, threading, time, sys
+import hashlib
+import shutil
+import tempfile
+import urllib.request
 from packaging import version as pkg_version
 from pathlib import Path
 
 # Manifest z shared drive (Y: jest dostępny dla wszystkich komputerów)
 MANIFEST_PATH = Path(r"Y:\Instalki\_SKRYPTY WIKT\OgarniaczSM\PROD\manifest.json")
 
-APP_DIR = Path(os.getenv("LOCALAPPDATA")) / "OgarniaczSM"
+_LOCAL_ROOT = Path(os.getenv("LOCALAPPDATA")).resolve()
+_RUNNING_DIR = Path(sys.executable).resolve().parent
+APP_DIR = (_RUNNING_DIR if getattr(sys, "frozen", False) and _RUNNING_DIR.is_relative_to(_LOCAL_ROOT)
+           else _LOCAL_ROOT / "OgarniaczSM")
 LOCAL_VERSION = APP_DIR / "version.json"
 UPDATER_EXE = APP_DIR / "OgarniaczUpdater.exe"
 APP_EXE = APP_DIR / "OgarniaczSM.exe"
 LOG_FILE = APP_DIR / "autoupdate.log"
+
+
+def _verified_updater(source, manifest):
+    from updater import verify_release, sha256
+    expected = manifest.get("file_manifest_sha256")
+    if not expected:
+        raise ValueError("The release manifest has no file inventory SHA256")
+    inventory = verify_release(source, expected)
+    if inventory["version"] != manifest["version"] or inventory["commit"] != manifest.get("commit"):
+        raise ValueError("Remote release identity mismatch")
+    helper = source / "OgarniaczUpdater.exe"
+    destination = Path(tempfile.mkdtemp(prefix="OgarniaczSM-updater-")) / helper.name
+    shutil.copy2(helper, destination)
+    if sha256(helper) != sha256(destination):
+        raise ValueError("Updater copy SHA256 mismatch")
+    return destination
+
+
+def _stop_idle_archviz():
+    base = os.environ.get("OGARNIACZ_ARCHVIZ_URL", "http://127.0.0.1:8890/").rstrip("/")
+    try:
+        with urllib.request.urlopen(base + "/api/health", timeout=2) as response:
+            health = json.load(response)
+    except Exception:
+        return
+    if health.get("service") != "archviz-studio":
+        return
+    # The original experimental service cannot be silently stopped/upgraded.
+    if not health.get("build"):
+        raise RuntimeError("Close the earlier Archviz server before updating")
+    with urllib.request.urlopen(base + "/api/bootstrap", timeout=2) as response:
+        token = json.load(response)["token"]
+    request = urllib.request.Request(base + "/api/shutdown", data=b"{}",
+        headers={"Content-Type": "application/json", "X-Studio-Token": token})
+    with urllib.request.urlopen(request, timeout=5):
+        pass
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline:
+        try:
+            with urllib.request.urlopen(base + "/api/health", timeout=.5):
+                pass
+        except Exception:
+            return
+        time.sleep(.2)
+    raise RuntimeError("Archviz worker is still running")
 
 def _log(msg: str):
     try:
@@ -22,6 +74,10 @@ def _log(msg: str):
 
 def _get_local_version() -> str:
     try:
+        if getattr(sys, "frozen", False):
+            metadata = Path(__file__).resolve().parent / "build_info.json"
+            if metadata.is_file():
+                return str(json.loads(metadata.read_text(encoding="utf-8"))["version"])
         return json.loads(LOCAL_VERSION.read_text(encoding="utf-8")).get("version", "0.0.0")
     except Exception:
         return "0.0.0"
@@ -65,7 +121,7 @@ def check_for_updates_once(silent: bool = True):
                     raise FileNotFoundError(f"Source path not found: {src_path}")
                 return
 
-            updater_to_use = UPDATER_EXE if UPDATER_EXE.exists() else (src_path_obj / "OgarniaczUpdater.exe")
+            updater_to_use = _verified_updater(src_path_obj, manifest)
             if not updater_to_use.exists():
                 _log(f"updater missing: {updater_to_use} (exists={updater_to_use.exists()})")
                 if not silent:
@@ -79,8 +135,10 @@ def check_for_updates_once(silent: bool = True):
                 "--launch", str(APP_EXE),
                 "--version", remote_ver
             ]
+            args += ["--manifest-sha256", manifest["file_manifest_sha256"], "--wait-pid", str(os.getpid())]
+            _stop_idle_archviz()
             _log(f"launching updater: {args}")
-            subprocess.Popen(args, cwd=str(updater_to_use.parent))
+            subprocess.Popen(args, cwd=str(updater_to_use.parent), creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             os._exit(0)  # natychmiast kończymy proces aplikacji – updater przejmie ster
         else:
             _log(f"no update needed: local version ({local_ver}) >= remote version ({remote_ver})")

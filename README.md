@@ -1,7 +1,12 @@
 # OgarniaczSM
 
 Aplikacja desktopowa Still Motion: kafelki skryptów i aplikacji, PDF Magician,
-People Enhancer oraz zadania przetwarzane na Zeusie.
+People Enhancer, Archviz Studio oraz zadania przetwarzane na Zeusie.
+
+**Archviz Studio:** edytor uwag na obrazie, lokalne poprawki Nano Banana Pro HIGH,
+naprawa wąskiego pasa krawędzi, ochrona zaakceptowanych elementów, historia wersji,
+obieg Photoshop/Firefly i eksport zatwierdzonych JPG. Start: kafelek w aplikacji
+lub `main.py --archviz-studio`. [Instrukcja i diagnostyka](docs/ARCHVIZ_STUDIO.md).
 
 Folder główny projektu Codex na Blade22:
 `C:\Users\wikto\source\repos\OgarniaczSM`.
@@ -11,7 +16,7 @@ Wybierz katalog zawierający ten plik i `.git`, a nie `app/` ani udział Y:.
 OgarniaczSM/
   app/                 aktualne źródła, narzędzia budowania i zasoby
     config.example.json  wzór konfiguracji; config.json pozostaje lokalny
-    version.txt          numer dotychczasowego wydania: 0.5.2.28
+    version.txt          numer wydania: 0.5.2.29
   tests/               testy izolacji aktualizatora
   docs/
     DEVELOPMENT.md     uruchamianie i zasady Git
@@ -51,3 +56,5 @@ Nie wdrażano zmian do produkcji. Zasady pracy obu komputerów:
 
 Testy: `python -m unittest discover -s tests -v`.
 Szczegóły i ograniczenia: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+
+Build i wdrożenie: [docs/RELEASING.md](docs/RELEASING.md).
