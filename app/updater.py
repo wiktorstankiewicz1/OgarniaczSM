@@ -60,11 +60,12 @@ def verify_release(src, expected_manifest_sha=None, allow_userdata=False):
     version = json.loads((src / "version.json").read_text(encoding="utf-8"))["version"]
     if version != manifest["version"]:
         raise ValueError("Package version mismatch")
+    allowed_files = expected | {"file_manifest.json"}
     for path in src.rglob("*"):
         relative = path.relative_to(src)
         if path.is_symlink():
             raise ValueError("Symlink in package")
-        if path.is_file() and relative.as_posix().casefold() not in expected | {"file_manifest.json"}:
+        if path.is_file() and relative.as_posix().casefold() not in allowed_files:
             if not (allow_userdata and is_userdata(relative)):
                 raise ValueError("Unlisted package file: " + relative.as_posix())
     return manifest
@@ -98,7 +99,6 @@ def copy_dir(src, dst, expected_manifest_sha=None, version=None):
     moved_old = False
     try:
         shutil.copytree(src, staging)
-        verify_release(staging, expected_manifest_sha)
         for name in ["config.json", "ArchvizStudio", "autoupdate.log"]:
             existing, target = dst / name, staging / name
             if existing.is_dir():

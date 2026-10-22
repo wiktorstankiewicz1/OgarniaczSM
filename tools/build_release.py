@@ -11,6 +11,7 @@ used. A failed build is retained with its log for diagnosis.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import importlib.metadata
 import json
@@ -117,10 +118,88 @@ def _pyinstaller_command(repo: Path, output: Path, name: str, entry: str,
 
 
 def _run(command: list[str], repo: Path, log, env: dict) -> None:
+    env = clean_build_environment(env)
     log.write("\nCOMMAND " + json.dumps(command, ensure_ascii=False) + "\n")
+    log.write("BUILD_PATH " + env["PATH"] + "\n")
     log.flush()
     subprocess.run(command, cwd=repo, env=env, stdout=log, stderr=subprocess.STDOUT,
                    check=True, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+
+
+def clean_build_environment(inherited: dict | None = None) -> dict:
+    """Prevent unrelated desktop tools' DLLs from entering the frozen package."""
+    env = dict(os.environ if inherited is None else inherited)
+    system_root = Path(env.get("SystemRoot") or env.get("WINDIR") or r"C:\Windows").resolve()
+    paths = [Path(sys.executable).resolve().parent, Path(sys.base_prefix).resolve(),
+             Path(sys.base_prefix).resolve() / "DLLs", system_root / "System32",
+             system_root, system_root / "System32/Wbem"]
+    # Never append inherited PATH: Codex's Poppler/libheif and other DCC tools
+    # can provide incompatible ICU/UCRT DLLs with the same filenames Qt uses.
+    env["PATH"] = os.pathsep.join(dict.fromkeys(str(path) for path in paths if path.is_dir()))
+    for key in list(env):
+        if key.upper() in {"PYTHONPATH", "PYTHONHOME", "PYTHONUSERBASE", "PYTHONSTARTUP",
+                           "QTDIR", "QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH",
+                           "QML2_IMPORT_PATH", "QML_IMPORT_PATH"}:
+            del env[key]
+    env["PYTHONNOUSERSITE"] = "1"
+    env["VIRTUAL_ENV"] = sys.prefix
+    return env
+
+
+def verify_dependency_provenance(build_dir: Path, source: Path, destination: Path) -> dict:
+    """Audit PyInstaller's real collected inputs before packaging any artifact."""
+    system_root = Path(os.environ.get("SystemRoot") or os.environ.get("WINDIR") or r"C:\Windows").resolve()
+    roots = [Path(sys.prefix).resolve(), Path(sys.base_prefix).resolve(),
+             system_root, source.resolve(), build_dir.resolve()]
+    tocs = sorted(set(build_dir.rglob("Analysis-*.toc")) | set(build_dir.rglob("COLLECT-*.toc")))
+    if not tocs:
+        raise ValueError("No PyInstaller Analysis/COLLECT TOC found; dependency provenance is unknown.")
+    records, forbidden, seen = [], [], set()
+    def walk(value):
+        if isinstance(value, (tuple, list)):
+            if (len(value) == 3 and isinstance(value[0], str) and isinstance(value[1], str)
+                    and isinstance(value[2], str)
+                    and value[2] in {"BINARY", "EXTENSION", "EXECUTABLE", "DATA", "PYMODULE", "PYSOURCE"}):
+                yield value
+            else:
+                for item in value:
+                    yield from walk(item)
+        elif isinstance(value, dict):
+            for item in value.values():
+                yield from walk(item)
+    for toc in tocs:
+        try:
+            contents = ast.literal_eval(toc.read_text(encoding="utf-8"))
+        except (SyntaxError, ValueError) as error:
+            raise ValueError(f"Cannot audit PyInstaller TOC: {toc.name}") from error
+        for target, origin, kind in walk(contents):
+            path = Path(origin)
+            if not path.is_absolute():
+                continue
+            signature = (target, str(path), kind)
+            if signature in seen:
+                continue
+            seen.add(signature)
+            resolved = path.resolve()
+            reasons = []
+            if not any(resolved.is_relative_to(root) for root in roots):
+                reasons.append("Collected input is outside the venv/base Python/Windows/frozen source/build roots.")
+            if "codex-runtimes" in {part.lower() for part in resolved.parts}:
+                reasons.append("Codex runtime dependencies must never be bundled.")
+            if Path(target).name.lower() == "icuuc.dll":
+                reasons.append("This Qt build requires Windows system ICU; bundling icuuc.dll shadows it.")
+            record = {"target": target, "source": str(path), "type": kind,
+                      "toc": toc.relative_to(build_dir).as_posix()}
+            records.append(record)
+            if reasons:
+                forbidden.append({**record, "reasons": reasons})
+    report = {"status": "FAIL" if forbidden else "PASS", "allowed_roots": [str(p) for p in roots],
+              "toc_files": [p.relative_to(build_dir).as_posix() for p in tocs],
+              "collected_input_count": len(records), "forbidden": forbidden, "inputs": records}
+    _json(destination, report)
+    if forbidden:
+        raise ValueError(f"Dependency provenance FAIL ({len(forbidden)} inputs); see {destination}.")
+    return report
 
 
 def freeze_source(repo: Path, destination: Path, commit: str) -> None:
@@ -146,6 +225,8 @@ def verify_bundle(bundle: Path) -> dict:
             missing.append("QtWebEngine dependency: " + filename)
     if missing:
         raise ValueError("Incomplete runnable bundle: " + ", ".join(missing))
+    if any(path.name.lower() == "icuuc.dll" for path in bundle.rglob("*")):
+        raise ValueError("Bundled icuuc.dll would shadow the Windows ICU required by Qt6Core.")
     configs = [str(p.relative_to(bundle)) for p in bundle.rglob("config.json")]
     if configs:
         raise ValueError("Machine configuration must not be bundled: " + ", ".join(configs))
@@ -199,7 +280,7 @@ def build(repo: Path, output: Path, info: dict, resources: list[Path]) -> dict:
     build_info = {k: v for k, v in info.items() if k != "dirty"}
     _json(generated / "build_info.json", build_info)
     _json(output / "build_state.json", {"status": "building", **build_info})
-    env = os.environ.copy()
+    env = clean_build_environment()
     env["SOURCE_DATE_EPOCH"] = str(info["source_date_epoch"])
     # PDF Magician is also an external-script tile. Retain its script and helper
     # beside the executable for configurations that resolve these local paths.
@@ -215,9 +296,11 @@ def build(repo: Path, output: Path, info: dict, resources: list[Path]) -> dict:
             print("Building application with ordinary PyInstaller/Qt hooks...", flush=True)
             _run(_pyinstaller_command(source, output, APP_NAME, "main.py", onefile=False,
                                       datas=datas), source, log, env)
+            verify_dependency_provenance(output / "build", source, output / "dependency_provenance.json")
             print("Building standalone updater...", flush=True)
             _run(_pyinstaller_command(source, output, UPDATER_NAME, "updater.py", onefile=True),
                  source, log, env)
+            verify_dependency_provenance(output / "build", source, output / "dependency_provenance.json")
         current, _ = source_info(repo)
         if current["dirty"] or current["commit"] != info["commit"]:
             raise ValueError("Source changed during build; this staging release cannot be published.")
